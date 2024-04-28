@@ -33,3 +33,7 @@ override.tf.json
 # Ignore CLI configuration files
 .terraformrc
 terraform.rc
+
+# Files created locally during run
+dbinit/phpipam.sql
+tf_ansible_vars_file.yaml
