@@ -1,0 +1,97 @@
+---
+- name: Playbook to configure phpipam
+  hosts: localhost
+  gather_facts: false
+
+  vars_files:
+    - ../01.ipam/tf_ansible_vars_file.yaml
+    - local_vars.yaml
+  
+  vars:
+    ipam_base: "{{ipam_url}}api/{{phpipam_app_id}}/"
+  
+  module_defaults:
+    ansible.builtin.uri:
+      validate_certs: false
+      headers:
+          token: "{{phpipam_token}}"
+
+  tasks:
+    - name: Creating a Parent section
+      uri:
+        url: "{{ipam_base}}sections/"
+        method: POST
+        body_format: json
+        body: |-
+          {
+            "name": "NaC AWS",
+            "description": "Network As Code in AWS",
+            "showVLAN": 0,
+            "showVRF": 0,
+            "strictMode": 1,
+            "permissions": "{\"3\":\"1\",\"2\":\"2\"}"
+          }
+        status_code: 201
+        return_content: true
+      register: result
+    
+    - name: Storing ID of parent section
+      set_fact:
+        parent_section_id: "{{result.json.id}}"
+        debug:
+          var: parent_section_id
+
+    - debug:
+        var: parent_section_id
+
+    - name: Create Child section AWS 1
+      uri:
+        url: "{{ipam_base}}sections/"
+        method: POST
+        body_format: json
+        body: |-
+          {
+            "name": "AWS Region 1",
+            "masterSection": {{parent_section_id}},
+            "description": "Child section 1: {{region1}}",
+            "showVLAN": 0,
+            "showVRF": 0,
+            "strictMode": 1,
+            "permissions": "{\"3\":\"1\",\"2\":\"2\"}"
+          }
+        status_code: 201
+        return_content: true
+      register: result
+
+    - name: Storing ID of child section 1
+      set_fact:
+        child1_section_id: "{{result.json.id}}"
+
+    - debug:
+        var: child1_section_id
+
+    - name: Create Child section AWS 2
+      uri:
+        url: "{{ipam_base}}sections/"
+        method: POST
+        body_format: json
+        body: |-
+          {
+            "name": "AWS Region 2",
+            "masterSection": {{parent_section_id}},
+            "description": "Child section 2: {{region2}}",
+            "showVLAN": 0,
+            "showVRF": 0,
+            "strictMode": 1,
+            "permissions": "{\"3\":\"1\",\"2\":\"2\"}"
+          }
+        status_code: 201
+        return_content: true
+      register: result
+
+    - name: Storing ID of child section 2
+      set_fact:
+        child2_section_id: "{{result.json.id}}"
+
+    - debug:
+        var: child2_section_id
