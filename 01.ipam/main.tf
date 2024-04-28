@@ -1,10 +1,10 @@
 data "http" "phpipam-sql" {
-    url = "https://raw.githubusercontent.com/phpipam/phpipam/master/db/SCHEMA.sql"
+    url = "https://raw.githubusercontent.com/phpipam/phpipam/1.6/db/SCHEMA.sql"
 }
 
 resource "local_sensitive_file" "phpipam-sql" {
     content = data.http.phpipam-sql.response_body
-    filename = "${path.module}/dbinit/phpipam.sql"
+    filename = "${path.cwd}/dbinit/phpipam.sql"
     file_permission = "0644"
 }
 
@@ -19,7 +19,7 @@ resource "random_password" "db_ipam_pass" {
 }
 
 data "docker_registry_image" "phpipam-web" {
-    name = "phpipam/phpipam-www"
+    name = "phpipam/phpipam-www:1.6x"
 }
 
 resource "docker_image" "phpipam-web" {
@@ -97,7 +97,12 @@ resource "docker_container" "app-web" {
 
     ports {
         internal = 80
-        external = 80
+        external = var.http_port
+    }
+
+    ports {
+        internal = 443
+        external = var.https_port
     }
 
     env = [

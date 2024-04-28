@@ -1,6 +1,11 @@
 # nac-prereq
 Prerequisites for Network as Code  
 
+# Software required
+- Docker
+- Terraform
+
+# Description
 Currently deploys a set of Docker containers for phpipam.  
 Username: Admin  
 Password: ipamadmin  
