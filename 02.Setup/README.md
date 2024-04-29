@@ -5,4 +5,7 @@ For automated configuration, the tool we choose here is Ansible.
 
 # Software
 - Ansible
-- [Codeaffen.Phpipam](https://phpipam-ansible-modules.readthedocs.io/en/develop/plugins/index.html#)
+
+# HOWTO
+Deploy: `ansible-playbook playbook.yaml`  
+Undo: `ansible-playbook undo.yaml`
