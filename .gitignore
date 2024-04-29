@@ -39,3 +39,6 @@ terraform.rc
 
 # Any credentials files
 credentials.*
+
+# .. except for the examples
+!credentials.*.example
