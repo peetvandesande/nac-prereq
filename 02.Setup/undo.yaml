@@ -1,0 +1,37 @@
+---
+- name: Playbook to undo configuration of phpipam
+  hosts: localhost
+  gather_facts: false
+
+  vars_files:
+    - ../01.ipam/tf_ansible_vars_file.yaml
+    - credentials.yaml
+    - vars.yaml
+    - "{{artifacts_file}}"
+  
+  vars:
+    ipam_base: "{{ipam_url}}api/{{phpipam_app_id}}/"
+  
+  module_defaults:
+    ansible.builtin.uri:
+      validate_certs: false
+      headers:
+          token: "{{phpipam_token}}"
+
+  tasks:
+    - name: Deleting a section
+      uri:
+        url: "{{ipam_base}}sections/"
+        method: DELETE
+        body_format: json
+        body: |-
+          {
+            "id": "{{section_id}}"
+          }
+      ignore_errors: true
+
+    - name: Clearing up artifact
+      file:
+        state: absent
+        path: "{{artifacts_file}}"
+      ignore_errors: true
