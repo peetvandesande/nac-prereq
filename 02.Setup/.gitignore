@@ -1,2 +1,5 @@
 # Local variables with SENSITIVE information
 local_vars.yaml
+
+# Temporary file to keep track of build results
+artifacts.yaml
