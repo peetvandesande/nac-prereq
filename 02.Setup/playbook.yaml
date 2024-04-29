@@ -5,7 +5,8 @@
 
   vars_files:
     - ../01.ipam/tf_ansible_vars_file.yaml
-    - local_vars.yaml
+    - vars.yaml
+    - credentials.yaml
   
   vars:
     ipam_base: "{{ipam_url}}api/{{phpipam_app_id}}/"
@@ -17,7 +18,7 @@
           token: "{{phpipam_token}}"
 
   tasks:
-    - name: Creating a Parent section
+    - name: Creating a section
       uri:
         url: "{{ipam_base}}sections/"
         method: POST
@@ -35,63 +36,62 @@
         return_content: true
       register: result
     
-    - name: Storing ID of parent section
+    - name: Getting ID of section
       set_fact:
-        parent_section_id: "{{result.json.id}}"
-        debug:
-          var: parent_section_id
+        section_id: "{{result.json.id}}"
+    
+    - name: Storing ID of section
+      lineinfile:
+        path: "{{artifacts_file}}"
+        line: "section_id: {{section_id}}"
+        create: yes
 
-    - debug:
-        var: parent_section_id
-
-    - name: Create Child section AWS 1
+    - name: Create supernet for region 1
       uri:
-        url: "{{ipam_base}}sections/"
+        url: "{{ipam_base}}subnets/"
         method: POST
         body_format: json
         body: |-
           {
-            "name": "AWS Region 1",
-            "masterSection": {{parent_section_id}},
-            "description": "Child section 1: {{region1}}",
-            "showVLAN": 0,
-            "showVRF": 0,
-            "strictMode": 1,
-            "permissions": "{\"3\":\"1\",\"2\":\"2\"}"
+            "subnet": "{{region1_cidr.split('/').0}}",
+            "mask": "{{region1_cidr.split('/').1}}",
+            "description": "Region 1 supernet",
+            "sectionId": {{section_id}}
           }
         status_code: 201
         return_content: true
       register: result
 
-    - name: Storing ID of child section 1
+    - name: Getting ID of supernet 1
       set_fact:
-        child1_section_id: "{{result.json.id}}"
+        supernet1_id: "{{result.json.id}}"
 
-    - debug:
-        var: child1_section_id
+    - name: Storing ID of supernet 1
+      lineinfile:
+        path: "{{artifacts_file}}"
+        line: "supernet1_id: {{supernet1_id}}"
 
-    - name: Create Child section AWS 2
+    - name: Create supernet for region 2
       uri:
-        url: "{{ipam_base}}sections/"
+        url: "{{ipam_base}}subnets/"
         method: POST
         body_format: json
         body: |-
           {
-            "name": "AWS Region 2",
-            "masterSection": {{parent_section_id}},
-            "description": "Child section 2: {{region2}}",
-            "showVLAN": 0,
-            "showVRF": 0,
-            "strictMode": 1,
-            "permissions": "{\"3\":\"1\",\"2\":\"2\"}"
+            "subnet": "{{region2_cidr.split('/').0}}",
+            "mask": "{{region2_cidr.split('/').1}}",
+            "description": "Region 2 supernet",
+            "sectionId": {{section_id}}
           }
         status_code: 201
         return_content: true
       register: result
 
-    - name: Storing ID of child section 2
+    - name: Getting ID of supernet 2
       set_fact:
-        child2_section_id: "{{result.json.id}}"
+        supernet2_id: "{{result.json.id}}"
 
-    - debug:
-        var: child2_section_id
+    - name: Storing ID of supernet 2
+      lineinfile:
+        path: "{{artifacts_file}}"
+        line: "supernet2_id: {{supernet2_id}}"
