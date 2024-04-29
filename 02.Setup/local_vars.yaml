@@ -1,6 +1,3 @@
-phpipam_app_id: nac
-phpipam_token: "cZ9tzN3DAafNnK21-CeNcp_wufQOPgNE"
-
 region1: "us-east-2"
 region1_cidr: "10.0.0.0/11"
 
