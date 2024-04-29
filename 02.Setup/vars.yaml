@@ -1,4 +1,5 @@
 artifacts_file: "artifacts.yaml"
+env_file: "../env.json"
 
 region1: "us-east-2"
 region1_cidr: "10.0.0.0/11"

@@ -42,3 +42,6 @@ credentials.*
 
 # .. except for the examples
 !credentials.*.example
+
+# Don't track the output of the setup
+env.json

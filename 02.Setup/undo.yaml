@@ -30,8 +30,14 @@
           }
       ignore_errors: true
 
+    - name: Removing env file
+      file:
+        path: "{{env_file}}"
+        state: absent
+      ignore_errors: true
+
     - name: Clearing up artifact
       file:
-        state: absent
         path: "{{artifacts_file}}"
+        state: absent
       ignore_errors: true

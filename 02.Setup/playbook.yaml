@@ -95,3 +95,16 @@
       lineinfile:
         path: "{{artifacts_file}}"
         line: "supernet2_id: {{supernet2_id}}"
+
+    - copy:
+        dest: "{{env_file}}"
+        content: "{{env | to_json}}"
+      vars:
+        env:
+          ipam_base: "{{ipam_base}}"
+          ipam_token: "{{phpipam_token}}"
+          supernets:
+            - id: "{{supernet1_id}}"
+              cidr: "{{region1_cidr}}"
+            - id: "{{supernet2_id}}"
+              cidr: "{{region2_cidr}}"
