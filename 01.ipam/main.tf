@@ -1,5 +1,6 @@
 data "http" "phpipam-sql" {
-    url = "https://raw.githubusercontent.com/phpipam/phpipam/1.6/db/SCHEMA.sql"
+    #url = "https://raw.githubusercontent.com/phpipam/phpipam/1.6/db/SCHEMA.sql"
+    url = "https://raw.githubusercontent.com/phpipam/phpipam/master/db/SCHEMA.sql"
 }
 
 resource "local_sensitive_file" "phpipam-sql" {
@@ -19,7 +20,8 @@ resource "random_password" "db_ipam_pass" {
 }
 
 data "docker_registry_image" "phpipam-web" {
-    name = "phpipam/phpipam-www:1.6x"
+    #name = "phpipam/phpipam-www:1.6x"
+    name = "phpipam/phpipam-www:nightly"
 }
 
 resource "docker_image" "phpipam-web" {
@@ -140,13 +142,4 @@ resource "docker_volume" "phpipam-ca" {
 
 resource "docker_volume" "mariadb-data" {
     name = "mariadb-data"
-}
-
-resource "local_file" "tf_ansible_vars_file" {
-    content = <<-EOF
-        # Ansible vars_file containing variable values from Terraform.
-
-        ipam_url: ${format("https://localhost%s/", var.https_port == 443 ? "" : format(":%d", var.https_port))}
-        EOF
-    filename = "./tf_ansible_vars_file.yaml"
 }
